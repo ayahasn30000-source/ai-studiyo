@@ -197,7 +197,7 @@ $('#btn-menu').addEventListener('click',openDrawer);$('#drawer-bg').addEventList
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!drawer.hidden)closeDrawer()});
 $$('.dit').forEach(b=>b.addEventListener('click',()=>{show(b.dataset.go);closeDrawer()}));
 const GX={tabs:[],cur:null,seq:0,ai:[],busy:false,ctl:null,ctxText:'',ctxFor:''};
-const GX_DIAL=[['Vikipedi','https://tr.wikipedia.org'],['Wikipedia','https://en.wikipedia.org'],['OpenStreetMap','https://www.openstreetmap.org'],['MDN','https://developer.mozilla.org/tr/'],['Commons','https://commons.wikimedia.org'],['Archive.org','https://archive.org']];
+const GX_DIAL=[['Vikipedi','https://tr.wikipedia.org'],['r/place','https://rplace.live'],['Wikipedia','https://en.wikipedia.org'],['OpenStreetMap','https://www.openstreetmap.org'],['MDN','https://developer.mozilla.org/tr/'],['Commons','https://commons.wikimedia.org'],['Archive.org','https://archive.org']];
 const GX_COL=['#fa1e4e','#7c4dff','#00a3ff','#ff8a00','#12b886','#e64980','#4263eb','#f08c00'];
 const gxBm=()=>jget('atolye.bm',[]),gxHost=u=>{try{return new URL(u).hostname.replace(/^www\./,'')}catch{return u}};
 const gxTab=()=>GX.tabs.find(t=>t.id===GX.cur),gxUrl=t=>t&&t.stack[t.i]||'';
