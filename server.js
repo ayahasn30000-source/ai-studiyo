@@ -1,5 +1,12 @@
-const http=require('http'),fs=require('fs'),path=require('path');
+const http=require('http'),fs=require('fs'),path=require('path'),crypto=require('crypto');
 const port=Number(process.env.PORT||3000);
+const accessPassword=process.env.APP_ACCESS_PASSWORD||'';
+const cookieName='aistudio_access';
+const token=()=>crypto.createHmac('sha256',accessPassword).update('aistudio-auth-v1').digest('hex');
+const cookies=req=>Object.fromEntries((req.headers.cookie||'').split(';').map(x=>x.trim().split('=').map(decodeURIComponent)).filter(x=>x.length===2));
+const isAuthed=req=>{if(!accessPassword)return false;const got=cookies(req)[cookieName]||'';return got.length===64&&crypto.timingSafeEqual(Buffer.from(got),Buffer.from(token()));};
+const json=(res,status,data,headers={})=>{res.writeHead(status,{'Content-Type':'application/json; charset=utf-8',...headers});res.end(JSON.stringify(data));};
+async function readBody(req){let raw='';for await(const chunk of req)raw+=chunk;try{return JSON.parse(raw||'{}')}catch{return {}}}
 async function ai(body){
   const messages=Array.isArray(body.messages)?body.messages:[];
   const r=await fetch(`${process.env.MANUS_API_URL}/v1/chat/completions`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${process.env.MANUS_API_KEY}`},body:JSON.stringify({messages})});
@@ -11,8 +18,16 @@ async function ai(body){
 }
 const server=http.createServer(async(req,res)=>{
   res.setHeader('Access-Control-Allow-Origin','*');
+  if(req.method==='GET'&&req.url==='/api/session'){return json(res,200,{authenticated:isAuthed(req)});}
+  if(req.method==='POST'&&req.url==='/api/login'){
+    const body=await readBody(req);
+    if(!accessPassword||typeof body.password!=='string'||body.password!==accessPassword)return json(res,401,{error:'Şifre yanlış.'});
+    return json(res,200,{authenticated:true},{'Set-Cookie':`${cookieName}=${token()}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000`});
+  }
+  if(req.method==='POST'&&req.url==='/api/logout')return json(res,200,{ok:true},{'Set-Cookie':`${cookieName}=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`});
   if(req.method==='POST'&&req.url==='/api/ai'){
-    let raw='';req.on('data',c=>raw+=c);req.on('end',async()=>{try{const out=await ai(JSON.parse(raw||'{}'));res.writeHead(200,{'Content-Type':'application/json'});res.end(JSON.stringify(out));}catch(e){res.writeHead(500,{'Content-Type':'application/json'});res.end(JSON.stringify({error:e.message}));}});return;
+    if(!isAuthed(req))return json(res,401,{error:'Önce uygulama şifresiyle giriş yapın.'});
+    try{return json(res,200,await ai(await readBody(req)))}catch(e){return json(res,500,{error:e.message});}
   }
   let file=req.url==='/'?'/index.html':req.url.split('?')[0];file=path.join(__dirname,'public',path.normalize(file));
   if(!file.startsWith(path.join(__dirname,'public'))){res.writeHead(403);return res.end('Forbidden');}

@@ -71,8 +71,12 @@
 .gx-aif{display:flex;gap:6px;padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line)}.gx-aif input{flex:1;min-width:0;height:38px;border-radius:12px;border:1px solid var(--line);background:#0f0f15;color:var(--ink);padding:0 12px;font:14px var(--body)}.gx-aif input:focus{outline:0;border-color:var(--red)}
 @media(max-width:860px){.gx-side{width:46px}.gx-si{width:36px}.gx-ai{position:absolute;right:0;top:0;bottom:0;width:min(360px,100%);z-index:5;box-shadow:-12px 0 30px #000a}.gx-aibtn{padding:0 6px}}
 </style>
+<style>
+#auth-gate{position:fixed;inset:0;z-index:100;background:var(--bg);display:grid;place-items:center;padding:20px}#auth-gate[hidden]{display:none}.auth-card{width:min(420px,100%);background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:28px;box-shadow:var(--shadow)}.auth-card h1{font:800 25px var(--display);margin:0 0 8px}.auth-card p{color:var(--muted);margin:0 0 18px}.auth-card form{display:flex;gap:8px;flex-direction:column}.auth-card input{font-size:16px}.auth-card .btn{margin-top:4px}.auth-err{min-height:20px;color:var(--danger);font-size:13px}
+</style>
 </head>
 <body>
+<div id="auth-gate"><div class="auth-card"><p class="eyebrow">AI Studio Atölyesi</p><h1>Özel giriş</h1><p>Devam etmek için uygulama şifresini gir.</p><form id="auth-form"><input id="auth-password" type="password" autocomplete="current-password" placeholder="Şifre" required><button class="btn primary big" type="submit">Giriş yap</button><div class="auth-err" id="auth-err" aria-live="polite"></div></form></div></div>
 <div class="app" id="app">
 <nav class="rail" aria-label="Modüller">
 <svg class="brand" viewBox="0 0 48 48" fill="none" aria-hidden="true"><rect x="4" y="4" width="40" height="40" rx="12" stroke="currentColor" stroke-width="3"/><path d="M14 33l4-11 8 8 8-16" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="14" r="3" fill="currentColor"/></svg>
@@ -249,7 +253,10 @@ async function gxAiSend(text){text=(text||'').trim();if(GX.busy||!text)return;if
 $('#gx-aif').addEventListener('submit',e=>{e.preventDefault();gxAiSend($('#gx-aiin').value)});$('#gx-aistop').onclick=()=>GX.ctl?.abort();
 gxNew();
 
-/* Başlangıç */
-show((location.hash||'').slice(1)||'prompt');setPill();initAI();
+/* Başlangıç ve uygulama şifresi */
+const authGate=$('#auth-gate'),authForm=$('#auth-form'),authPassword=$('#auth-password'),authErr=$('#auth-err');
+async function checkSession(){try{const r=await fetch('/api/session');const d=await r.json();if(d.authenticated)authGate.hidden=true;else authGate.hidden=false}catch{authGate.hidden=false}}
+authForm.addEventListener('submit',async e=>{e.preventDefault();authErr.textContent='Kontrol ediliyor...';try{const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:authPassword.value})});const d=await r.json();if(!r.ok)throw new Error(d.error||'Giriş başarısız.');authGate.hidden=true;authPassword.value='';authErr.textContent=''}catch(err){authErr.textContent=err.message||'Şifre yanlış.';authPassword.select()}});
+show((location.hash||'').slice(1)||'prompt');setPill();initAI();checkSession();
 </script>
 </body></html>
