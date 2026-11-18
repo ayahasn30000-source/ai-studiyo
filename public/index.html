@@ -132,62 +132,6 @@ $('#ex-form').addEventListener('submit',async e=>{e.preventDefault();if(!AI.avai
 /* Veri temizleme */
 function doubleConfirm(btn,fn){let yes=false;btn.addEventListener('click',()=>{if(!yes){yes=true;const old=btn.textContent;btn.textContent='Emin misin? Tekrar tıkla';setTimeout(()=>{yes=false;btn.textContent=old},3000)}else{yes=false;fn()}})}doubleConfirm($('#clr-chat'),()=>{chat=[];saveChat();renderChat();toast('Sohbet silindi')});doubleConfirm($('#clr-hist'),()=>{jset('atolye.hist',[]);renderHist();toast('Prompt geçmişi silindi')});doubleConfirm($('#clr-all'),()=>{Object.keys(localStorage).filter(k=>k.startsWith('atolye.')).forEach(k=>localStorage.removeItem(k));location.reload()});
 
-/* Menü (3 çizgi) ve tarayıcı */
-const drawer=$('#drawer');const openDrawer=()=>{drawer.hidden=false},closeDrawer=()=>{drawer.hidden=true};
-$('#btn-menu').addEventListener('click',openDrawer);$('#drawer-bg').addEventListener('click',closeDrawer);$('#drawer-close').addEventListener('click',closeDrawer);
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!drawer.hidden)closeDrawer()});
-$$('.dit').forEach(b=>b.addEventListener('click',()=>{show(b.dataset.go);closeDrawer()}));
-const GX={tabs:[],cur:null,seq:0,ai:[],busy:false,ctl:null,ctxText:'',ctxFor:''};
-const GX_DIAL=[['Vikipedi','https://tr.wikipedia.org'],['Film Makinesi','https://filmmakinesi.to/'],['Wikipedia','https://en.wikipedia.org'],['OpenStreetMap','https://www.openstreetmap.org'],['MDN','https://developer.mozilla.org/tr/'],['Commons','https://commons.wikimedia.org'],['Archive.org','https://archive.org']];
-const GX_COL=['#fa1e4e','#7c4dff','#00a3ff','#ff8a00','#12b886','#e64980','#4263eb','#f08c00'];
-const GX_EXTERNAL=new Set(['filmmakinesi.to']);
-const gxBm=()=>jget('atolye.bm',[]),gxHost=u=>{try{return new URL(u).hostname.replace(/^www\./,'')}catch{return u}};
-const gxTab=()=>GX.tabs.find(t=>t.id===GX.cur),gxUrl=t=>t&&t.stack[t.i]||'';
-function gxNorm(v){v=v.trim();if(!v)return null;if(/^https?:\/\//i.test(v))return v;if((!/\s/.test(v)&&/^[\w-]+(\.[\w-]+)+([\/?#:].*)?$/.test(v))||/^localhost(:\d+)?/.test(v))return 'https://'+v;return 'https://tr.wikipedia.org/w/index.php?search='+encodeURIComponent(v)}
-function gxNew(url){const t={id:++GX.seq,stack:[],i:-1,fr:null};GX.tabs.push(t);GX.cur=t.id;if(url)gxGo(t,url);else gxRender()}
-function gxLoad(t,u){if(!t.fr){const f=document.createElement('iframe');f.title='Sayfa';f.setAttribute('sandbox','allow-scripts allow-forms allow-same-origin allow-popups allow-popups-to-escape-sandbox');f.referrerPolicy='no-referrer';$('#gx-frames').append(f);t.fr=f}t.fr.src=u}
-function gxGo(t,input,push=true){const u=gxNorm(input);if(!u){toast('Adres yaz.',true);return}if(push){t.stack=t.stack.slice(0,t.i+1);t.stack.push(u);t.i=t.stack.length-1}gxLoad(t,u);gxRender()}
-function gxClose(id){const i=GX.tabs.findIndex(t=>t.id===id);if(i<0)return;GX.tabs[i].fr?.remove();GX.tabs.splice(i,1);if(!GX.tabs.length)gxNew();else if(GX.cur===id)GX.cur=GX.tabs[Math.min(i,GX.tabs.length-1)].id;gxRender()}
-function gxRender(){const t=gxTab(),u=gxUrl(t);
- const strip=$('#gx-tabs');strip.textContent='';GX.tabs.forEach(x=>{const el=document.createElement('div');el.className='gx-tab'+(x.id===GX.cur?' on':'');const sp=document.createElement('span');sp.textContent=gxUrl(x)?gxHost(gxUrl(x)):'Yeni sekme';const c=document.createElement('i');c.textContent='✕';c.title='Sekmeyi kapat';c.addEventListener('click',e=>{e.stopPropagation();gxClose(x.id)});el.append(sp,c);el.addEventListener('click',()=>{GX.cur=x.id;gxRender()});strip.append(el)});
- const nb=document.createElement('button');nb.className='gx-newtab';nb.textContent='+';nb.title='Yeni sekme';nb.addEventListener('click',()=>gxNew());strip.append(nb);
- GX.tabs.forEach(x=>{if(x.fr)x.fr.hidden=!(x.id===GX.cur&&gxUrl(x))});
- $('#gx-start').hidden=!!u;$('#gx-url').value=u;$('#gx-back').disabled=!t||t.i<=0;$('#gx-fwd').disabled=!t||t.i>=t.stack.length-1;
- $('#gx-s-bm').classList.toggle('on',!!u&&gxBm().some(b=>b[1]===u));$('#gx-ai-toggle').classList.toggle('on',!$('#gx-ai').hidden);$('#gx-s-ai').classList.toggle('on',!$('#gx-ai').hidden);
- gxDial();gxCtxLabel()}
-function gxDial(){const box=$('#gx-dial');box.textContent='';const user=gxBm();[...GX_DIAL.map(d=>[...d,0]),...user.map(d=>[...d,1])].forEach(([n,u,own],k)=>{const b=document.createElement('div');b.className='gx-tile';b.tabIndex=0;const e=document.createElement('em');e.textContent=(n[0]||'?').toUpperCase();e.style.background=GX_COL[k%GX_COL.length];const l=document.createElement('span');l.textContent=n;b.append(e,l);if(own){const x=document.createElement('s');x.textContent='✕';x.title='Kaldır';x.addEventListener('click',ev=>{ev.stopPropagation();jset('atolye.bm',gxBm().filter(y=>y[1]!==u));gxRender()});b.append(x)}const go=()=>{if(GX_EXTERNAL.has(gxHost(u))){window.open(u,'_blank','noopener,noreferrer');toast('Yeni sekmede açıldı.')}else gxGo(gxTab(),u)};b.addEventListener('click',go);b.addEventListener('keydown',ev=>{if(ev.key==='Enter')go()});box.append(b)})}
-/* Gezinme */
-$('#gx-url').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();gxGo(gxTab(),e.target.value);e.target.blur()}});$('#gx-url').addEventListener('focus',e=>e.target.select());
-$('#gx-back').onclick=()=>{const t=gxTab();if(t&&t.i>0){t.i--;gxLoad(t,gxUrl(t));gxRender()}};$('#gx-fwd').onclick=()=>{const t=gxTab();if(t&&t.i<t.stack.length-1){t.i++;gxLoad(t,gxUrl(t));gxRender()}};
-$('#gx-reload').onclick=()=>{const t=gxTab();if(gxUrl(t))gxLoad(t,gxUrl(t))};
-$('#gx-ext').onclick=()=>{const u=gxUrl(gxTab())||gxNorm($('#gx-url').value);if(u)window.open(u,'_blank','noopener,noreferrer');else toast('Önce bir adres aç.',true)};
-$('#gx-s-new').onclick=()=>gxNew();$('#gx-s-home').onclick=()=>{const t=gxTab();t.stack=[];t.i=-1;t.fr?.removeAttribute('src');gxRender()};
-$('#gx-s-bm').onclick=()=>{const u=gxUrl(gxTab());if(!u){toast('Önce bir sayfa aç.',true);return}const a=gxBm();if(a.some(b=>b[1]===u))jset('atolye.bm',a.filter(b=>b[1]!==u));else{a.push([gxHost(u),u]);jset('atolye.bm',a.slice(-12));toast('Yer imi eklendi')}gxRender()};
-$('#gx-sform').addEventListener('submit',e=>{e.preventDefault();const q=$('#gx-sq').value;if(q.trim())gxGo(gxTab(),q)});
-/* Yapay zekâ paneli */
-function gxAiOpen(open){$('#gx-ai').hidden=!open;gxRender();if(open){gxChips();gxAiRender();setTimeout(()=>$('#gx-aiin').focus(),50)}}
-$('#gx-ai-toggle').onclick=$('#gx-s-ai').onclick=()=>gxAiOpen($('#gx-ai').hidden);$('#gx-ai-close').onclick=()=>gxAiOpen(false);
-$('#gx-ai-clear').onclick=()=>{GX.ai=[];gxAiRender()};
-$('#gx-sai').onclick=()=>{const q=$('#gx-sq').value.trim();gxAiOpen(true);if(q){$('#gx-sq').value='';gxAiSend(q)}};
-const GX_CHIPS=['Bu sayfayı özetle','Basitçe açıkla','Ana noktaları listele','Bana 5 test sorusu hazırla'];
-function gxChips(){const c=$('#gx-chips');c.textContent='';GX_CHIPS.forEach(t=>{const b=document.createElement('button');b.type='button';b.textContent=t;b.addEventListener('click',()=>gxAiSend(t));c.append(b)})}
-function gxCtxLabel(){const el=$('#gx-ctx'),u=gxUrl(gxTab()),pasted=$('#gx-paste').value.trim();el.textContent=pasted?'Bağlam: yapıştırdığın metin ('+countWords(pasted)+' kelime)':u?(GX.ctxFor===u&&GX.ctxText?'Bağlam: '+gxHost(u)+' sayfasının metni okundu':/wikipedia\.org/.test(u)?'Bağlam: '+gxHost(u)+' (soru sorunca metin okunur)':'Bağlam: '+gxHost(u)+' — sayfa içeriği okunamıyor, yalnızca adres biliniyor. Metni yapıştırırsan okurum.'):'Bağlam yok: bir sayfa aç ya da doğrudan soru sor.'}
-$('#gx-paste').addEventListener('input',gxCtxLabel);
-async function gxPageText(u){if(GX.ctxFor===u&&GX.ctxText)return GX.ctxText;let url;try{const x=new URL(u);if(!/(^|\.)wikipedia\.org$/.test(x.hostname))return '';const api='https://'+x.hostname+'/w/api.php?action=query&prop=extracts&explaintext=1&exsectionformat=plain&redirects=1&format=json&origin=*';if(x.pathname.startsWith('/wiki/'))url=api+'&titles='+encodeURIComponent(decodeURIComponent(x.pathname.slice(6)));else if(x.searchParams.get('search'))url=api+'&generator=search&gsrlimit=1&gsrsearch='+encodeURIComponent(x.searchParams.get('search'));else return ''}catch{return ''}
- try{const r=await fetch(url);const j=await r.json();const pg=Object.values(j.query?.pages||{})[0];const txt=(pg?.extract||'').slice(0,12000);if(txt){GX.ctxText=(pg.title?pg.title+'\n\n':'')+txt;GX.ctxFor=u}return GX.ctxText}catch{return ''}}
-function gxAiRender(){const box=$('#gx-msgs');box.textContent='';if(!GX.ai.length){const d=document.createElement('div');d.className='gx-m a';d.textContent='Merhaba! Açık sayfa hakkında soru sorabilir, özet isteyebilir ya da doğrudan sohbet edebilirsin.';box.append(d)}
- GX.ai.forEach(m=>{const d=document.createElement('div');d.className='gx-m '+(m.role==='user'?'u':'a')+(m.err?' err':'');if(m.role==='user')d.textContent=m.content;else{d.classList.add('md');mdRender(m.content,d)}box.append(d)});box.scrollTop=box.scrollHeight}
-async function gxAiSend(text){text=(text||'').trim();if(GX.busy||!text)return;if(!AI.available()){toast('Manus AI bağlı değil.',true);openSettings();return}
- if($('#gx-ai').hidden)gxAiOpen(true);GX.ai.push({role:'user',content:text});$('#gx-aiin').value='';gxAiRender();GX.busy=true;$('#gx-aisend').hidden=true;$('#gx-aistop').hidden=false;
- const box=$('#gx-msgs'),pend=document.createElement('div');pend.className='gx-m a';pend.textContent='Düşünüyor...';box.append(pend);box.scrollTop=box.scrollHeight;GX.ctl=new AbortController();
- try{const u=gxUrl(gxTab());let page=$('#gx-paste').value.trim().slice(0,14000);if(!page&&u){page=await gxPageText(u);gxCtxLabel()}
-  let sys=BASE+' Kullanıcı uygulamanın içindeki tarayıcıda geziniyor ve sağ panelden sana soru soruyor.';if(u)sys+=' Açık sayfanın adresi: '+u+'.';if(page)sys+='\n\nSayfa metni (kaynak):\n'+page+'\n\nSayfa metnine dayanarak cevap ver; metinde olmayanı uydurma.';else if(u)sys+=' Sayfanın içeriğine erişimin YOK; yalnızca adresi biliyorsun. İçeriği gördüğünü iddia etme, genel bilginle yardımcı ol ve gerekirse kullanıcıdan metni yapıştırmasını iste.';
-  const r=await ask(GX.ai.map(m=>({role:m.role,content:m.content})),{system:sys,signal:GX.ctl.signal});pend.remove();GX.ai.push({role:'assistant',content:r.text})}
- catch(e){pend.remove();GX.ai.push({role:'assistant',content:errText(e),err:true})}
- finally{GX.busy=false;GX.ctl=null;$('#gx-aisend').hidden=false;$('#gx-aistop').hidden=true;gxAiRender()}}
-$('#gx-aif').addEventListener('submit',e=>{e.preventDefault();gxAiSend($('#gx-aiin').value)});$('#gx-aistop').onclick=()=>GX.ctl?.abort();
-gxNew();
-
 /* Başlangıç ve uygulama şifresi */
 const authGate=$('#auth-gate'),authForm=$('#auth-form'),authPassword=$('#auth-password'),authErr=$('#auth-err');
 async function checkSession(){try{const r=await fetch('/api/session');const d=await r.json();if(d.authenticated)authGate.hidden=true;else authGate.hidden=false}catch{authGate.hidden=false}}
