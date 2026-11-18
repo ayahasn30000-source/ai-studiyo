@@ -28,48 +28,6 @@
 .drawer .dit{display:flex;align-items:center;gap:12px;width:100%;border:0;background:transparent;border-radius:12px;padding:11px 12px;font-size:15px;color:var(--ink);text-align:left}
 .drawer .dit:hover{background:var(--surface2)}.drawer .dit.active{background:var(--accentSoft);color:var(--accent);font-weight:700}.drawer .dit span{width:22px;text-align:center;font-size:17px}
 .drawer hr{border:0;border-top:1px solid var(--line);margin:8px 6px}
-
-/* GX tarayıcı */
-.gx{--surface:#15151c;--surface2:#1e1e28;--ink:#f2f2f7;--muted:#9a9aae;--line:#2b2b3a;--red:#fa1e4e;--glow:0 0 0 1px #fa1e4e55,0 0 18px #fa1e4e33;color-scheme:dark;color:var(--ink);background:#0b0b10;border:1px solid #2b2b3a;border-radius:16px;display:flex;flex:1;min-height:0;overflow:hidden;box-shadow:0 18px 40px -22px #000}
-.gx-side{width:58px;flex:none;background:#0f0f15;border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 0}
-.gx-logo{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;font:800 14px var(--display);color:#fff;background:linear-gradient(135deg,#fa1e4e,#a30f33);box-shadow:var(--glow);margin-bottom:8px}
-.gx-si{width:40px;height:40px;border:0;border-radius:12px;background:transparent;color:var(--muted);font-size:19px;display:grid;place-items:center}
-.gx-si:hover{background:var(--surface2);color:#fff}.gx-si.on{color:var(--red);background:#fa1e4e1f;box-shadow:var(--glow)}
-.gx-main{flex:1;min-width:0;display:flex;flex-direction:column}
-.gx-tabs{display:flex;gap:4px;align-items:flex-end;padding:8px 8px 0;background:#0f0f15;overflow-x:auto;scrollbar-width:none}
-.gx-tab{display:flex;align-items:center;gap:8px;max-width:190px;min-width:90px;height:34px;padding:0 8px 0 12px;border-radius:10px 10px 0 0;background:#171720;color:var(--muted);border:1px solid transparent;border-bottom:0;font-size:12.5px;cursor:pointer;flex:none}
-.gx-tab span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
-.gx-tab.on{background:#1e1e28;color:#fff;border-color:var(--line);box-shadow:inset 0 2px 0 var(--red)}
-.gx-tab i{font-style:normal;width:18px;height:18px;border-radius:6px;display:grid;place-items:center;font-size:11px}.gx-tab i:hover{background:#ffffff1c}
-.gx-newtab{flex:none;width:30px;height:30px;margin-bottom:2px;border:0;border-radius:9px;background:transparent;color:var(--muted);font-size:18px}.gx-newtab:hover{background:var(--surface2);color:#fff}
-.gx-bar{display:flex;gap:6px;align-items:center;padding:8px;background:#1e1e28;border-bottom:1px solid var(--line)}
-.gx-ib{flex:none;min-width:34px;height:34px;border:0;border-radius:10px;background:transparent;color:#d9d9e6;font-size:16px;padding:0 8px}.gx-ib:hover{background:#ffffff14}.gx-ib:disabled{opacity:.35}.gx-ib.sm{min-width:28px;height:28px;font-size:13px}
-.gx-aibtn{font-size:13px;font-weight:700;color:var(--red);border:1px solid #fa1e4e66}.gx-aibtn.on{background:var(--red);color:#fff;box-shadow:var(--glow)}
-.gx-bar input{flex:1;min-width:0;height:36px;border:1px solid var(--line);border-radius:18px;padding:0 16px;background:#0f0f15;color:var(--ink);font:14px var(--body)}
-.gx-bar input:focus{outline:0;border-color:var(--red);box-shadow:var(--glow)}
-.gx-body{flex:1;min-height:0;display:flex;position:relative}
-.gx-page{flex:1;min-width:0;position:relative;background:#0b0b10}
-#gx-frames,#gx-frames iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff}#gx-frames:empty{display:none}#gx-frames iframe[hidden]{display:none}
-.gx-start{position:absolute;inset:0;overflow:auto;padding:6vh 20px 24px;display:flex;flex-direction:column;align-items:center;gap:22px;background:radial-gradient(ellipse at 50% -10%,#fa1e4e30,transparent 60%),#0b0b10}.gx-start[hidden]{display:none}
-.gx-hero{font:800 clamp(28px,5vw,44px) var(--display);letter-spacing:-.02em}.gx-hero b{color:var(--red);text-shadow:0 0 24px #fa1e4e88}
-.gx-search{display:flex;gap:8px;width:min(620px,100%)}.gx-search input{flex:1;min-width:0;height:46px;border-radius:23px;border:1px solid var(--line);background:#15151c;color:var(--ink);padding:0 20px;font:15px var(--body)}.gx-search input:focus{outline:0;border-color:var(--red);box-shadow:var(--glow)}
-.gx-go{height:46px;padding:0 18px;border:0;border-radius:23px;background:var(--red);color:#fff;font-weight:700;font-size:14px;box-shadow:var(--glow)}.gx-go.alt{background:transparent;color:var(--red);border:1px solid #fa1e4e88;box-shadow:none}.gx-go:disabled{opacity:.5}
-.gx-aif .gx-go{height:38px;padding:0 14px;border-radius:12px}
-.gx-dial{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:12px;width:min(700px,100%)}
-.gx-tile{position:relative;border:1px solid var(--line);background:#15151c;border-radius:16px;padding:16px 8px 12px;display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--ink);font-size:13px;font-weight:600;cursor:pointer}
-.gx-tile:hover{border-color:var(--red);box-shadow:var(--glow);transform:translateY(-2px)}.gx-tile{transition:transform .12s}
-.gx-tile em{font:800 20px var(--display);font-style:normal;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;color:#fff}
-.gx-tile s{position:absolute;right:6px;top:4px;text-decoration:none;color:var(--muted);font-size:12px;padding:2px 5px;border-radius:6px;display:none}.gx-tile:hover s{display:block}.gx-tile s:hover{background:#ffffff1c;color:#fff}
-.gx-note{margin:0;color:var(--muted);font-size:12.5px;text-align:center;max-width:520px}
-.gx-ai{width:340px;flex:none;border-left:1px solid var(--line);background:#12121a;display:flex;flex-direction:column;min-height:0}.gx-ai[hidden]{display:none}
-.gx-ai-h{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid var(--line);color:var(--red)}
-.gx-ctx{font-size:12px;color:var(--muted);padding:8px 12px;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
-.gx-msgs{flex:1;min-height:0;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:10px}
-.gx-m{padding:9px 12px;border-radius:14px;font-size:14px;line-height:1.5;max-width:94%;overflow-wrap:anywhere}.gx-m.u{align-self:flex-end;background:var(--red);color:#fff;border-bottom-right-radius:4px}.gx-m.a{align-self:flex-start;background:#1e1e28;border:1px solid var(--line);border-bottom-left-radius:4px}.gx-m.err{border-color:#ff6b6b;color:#ffb4b4}
-.gx-chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 12px 8px}.gx-chips button{border:1px solid var(--line);background:#1e1e28;color:#d9d9e6;border-radius:999px;padding:5px 10px;font-size:12px}.gx-chips button:hover{border-color:var(--red);color:#fff}
-.gx-paste{padding:0 12px 8px;font-size:12.5px;color:var(--muted)}.gx-paste summary{cursor:pointer;padding:4px 0}.gx-paste textarea{width:100%;resize:vertical;background:#0f0f15;color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:8px;font:13px var(--body)}
-.gx-aif{display:flex;gap:6px;padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line)}.gx-aif input{flex:1;min-width:0;height:38px;border-radius:12px;border:1px solid var(--line);background:#0f0f15;color:var(--ink);padding:0 12px;font:14px var(--body)}.gx-aif input:focus{outline:0;border-color:var(--red)}
-@media(max-width:860px){.gx-side{width:46px}.gx-si{width:36px}.gx-ai{position:absolute;right:0;top:0;bottom:0;width:min(360px,100%);z-index:5;box-shadow:-12px 0 30px #000a}.gx-aibtn{padding:0 6px}}
 </style>
 <style>
 #auth-gate{position:fixed;inset:0;z-index:100;background:var(--bg);display:grid;place-items:center;padding:20px}#auth-gate[hidden]{display:none}.auth-card{width:min(420px,100%);background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:28px;box-shadow:var(--shadow)}.auth-card h1{font:800 25px var(--display);margin:0 0 8px}.auth-card p{color:var(--muted);margin:0 0 18px}.auth-card form{display:flex;gap:8px;flex-direction:column}.auth-card input{font-size:16px}.auth-card .btn{margin-top:4px}.auth-err{min-height:20px;color:var(--danger);font-size:13px}
@@ -80,7 +38,7 @@
 <div class="app" id="app">
 <nav class="rail" aria-label="Modüller">
 <svg class="brand" viewBox="0 0 48 48" fill="none" aria-hidden="true"><rect x="4" y="4" width="40" height="40" rx="12" stroke="currentColor" stroke-width="3"/><path d="M14 33l4-11 8 8 8-16" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="14" r="3" fill="currentColor"/></svg>
-<button class="nav active" data-view="prompt"><span>✎</span><b>Prompt</b></button><button class="nav" data-view="chat"><span>▤</span><b>Asistan</b></button><button class="nav" data-view="sheet"><span>▦</span><b>Tablo</b></button><button class="nav" data-view="lab"><span>▣</span><b>Ödev</b></button><button class="nav" data-view="browser"><span>🌐</span><b>Tarayıcı</b></button>
+<button class="nav active" data-view="prompt"><span>✎</span><b>Prompt</b></button><button class="nav" data-view="chat"><span>▤</span><b>Asistan</b></button><button class="nav" data-view="sheet"><span>▦</span><b>Tablo</b></button><button class="nav" data-view="lab"><span>▣</span><b>Ödev</b></button>
 </nav>
 <header class="topbar"><div class="tl"><button class="icon-btn" id="btn-menu" title="Menü" aria-label="Menüyü aç"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><div class="crumb"><b id="view-title">Prompt Atölyesi</b><span id="view-sub">Fikri yaz, prompt hazır olsun</span></div></div><div class="top-actions"><button class="pill warn" id="ai-pill"><i></i><b id="ai-pill-text">Yapay zekâ kapalı</b></button><button class="icon-btn" id="btn-theme" title="Temayı değiştir">◐</button><button class="icon-btn" id="btn-settings" title="Ayarlar">⚙</button></div></header>
 <main class="stage" id="stage">
@@ -97,33 +55,10 @@
 <section class="view fill" id="view-chat"><div class="chat"><div class="msgs" id="msgs" aria-live="polite"></div><div class="chips" id="csug"></div><form class="composer" id="cform"><textarea id="cin" rows="2" placeholder="Bir şey sor, kod yaz, hata ayıkla... (Enter gönderir, Shift + Enter yeni satır)"></textarea><div class="c-row"><div class="row"><select id="cmode"><option value="genel">Genel</option><option value="kod">Kod uzmanı</option><option value="yaratici">Yaratıcı</option><option value="ogretmen">Öğretmen</option><option value="gorsel">Görsel prompt yazarı</option></select><button type="button" class="btn sm" id="cclear">Sohbeti temizle</button></div><div class="row"><span class="msg" id="cstatus"></span><button type="button" class="btn danger" id="cstop" hidden>Durdur</button><button class="btn primary" id="csend">Gönder</button></div></div></form></div></section>
 <section class="view fill" id="view-sheet"><div class="sheet-tools"><button class="tbtn" id="x-bold"><b>K</b></button><button class="tbtn" id="x-italic"><i>T</i></button><button class="tbtn" id="x-budget">Bütçe şablonu</button><button class="tbtn" id="x-sales">Satış şablonu</button><button class="tbtn" id="x-csv">CSV kopyala</button><button class="tbtn" id="x-ai">AI ile tablo kur</button><button class="tbtn" id="x-clear">Temizle</button></div><div class="row" id="xl-ai" hidden><input id="x-ai-in" placeholder="Örn: 5 ürünlük satış ve kâr tablosu kur"><button class="btn primary sm" id="x-ai-go">Oluştur</button><span id="x-ai-msg" class="msg"></span></div><div class="sheet-wrap"><table class="sheet" id="xl-table"></table></div><div class="row" style="justify-content:space-between"><span class="msg" id="x-stats">Hazır</span><button class="btn sm" id="x-undo">Geri al</button></div></section>
 <section class="view" id="view-lab"><div class="inner"><div><p class="eyebrow">Ödev &amp; Sınav</p><h1 class="hero">Ödevi <mark>anla</mark>, sınava hazırlan.</h1><p class="lede">Soruyu yaz veya fotoğrafını ekle. Sınıfını ve dersini seçerek yardım al.</p></div><div class="chips"><button class="chip on" id="od-tab-hw">Ödev yap</button><button class="chip" id="od-tab-ex">Sınav araştır</button></div><div id="od-hw"><form class="card" id="hw-form" style="display:flex;flex-direction:column;gap:12px"><div class="grid"><div class="field"><label for="hw-grade">Sınıf</label><select id="hw-grade"></select></div><div class="field"><label for="hw-course">Ders</label><select id="hw-course"></select></div><div class="field"><label for="hw-style">Yardım şekli</label><select id="hw-style"><option value="adim">Adım adım anlat</option><option value="ipucu">İpucu ver</option><option value="yaz">Ödevi yaz</option><option value="kontrol">Cevabımı kontrol et</option></select></div></div><div class="field"><label for="hw-q">Sorun / ödevin</label><textarea id="hw-q" rows="4" placeholder="Soruyu buraya yaz..."></textarea></div><div class="row"><input type="file" id="hw-file" accept="image/*" multiple><button class="btn primary" id="hw-go">Yardım al</button><button type="button" class="btn danger" id="hw-stop" hidden>Durdur</button><span id="hw-msg" class="msg"></span></div></form><section class="card" id="hw-out" hidden><div class="row" style="justify-content:space-between"><b>Cevap</b><button class="btn sm" id="hw-copy">Kopyala</button></div><div id="hw-thread" class="md"></div><form id="hw-follow-form" class="row"><input id="hw-follow" placeholder="Devam sorusu" style="flex:1"><button class="btn primary">Sor</button></form></section></div><div id="od-ex" hidden><form class="card" id="ex-form" style="display:flex;flex-direction:column;gap:12px"><div class="grid"><div class="field"><label for="ex-grade">Sınıf</label><select id="ex-grade"></select></div><div class="field"><label for="ex-course">Ders</label><select id="ex-course"></select></div><div class="field"><label for="ex-term">Dönem</label><select id="ex-term"><option>1</option><option>2</option></select></div><div class="field"><label for="ex-type">Sınav türü</label><select id="ex-type"><option>Yazılı</option><option>Sözlü</option><option>Konuşma sınavı</option><option>Test / deneme</option></select></div></div><div class="field"><label for="ex-note">Öğretmenin verdiği konular (isteğe bağlı)</label><textarea id="ex-note" rows="2"></textarea></div><button class="btn primary">Araştır ve hazırla</button></form><div id="ex-res" class="md card" hidden style="margin-top:12px"></div></div></div></section>
-<section class="view fill" id="view-browser"><div class="gx" id="gx">
-<aside class="gx-side"><div class="gx-logo" title="AI Studio GX">GX</div>
-<button class="gx-si" id="gx-s-new" title="Yeni sekme"><span>＋</span></button>
-<button class="gx-si" id="gx-s-home" title="Başlangıç sayfası"><span>⌂</span></button>
-<button class="gx-si" id="gx-s-ai" title="Yapay zekâ paneli"><span>✦</span></button>
-<button class="gx-si" id="gx-s-bm" title="Bu sayfayı yer imine ekle / kaldır"><span>★</span></button></aside>
-<div class="gx-main"><div class="gx-tabs" id="gx-tabs"></div>
-<div class="gx-bar"><button class="gx-ib" id="gx-back" title="Geri" disabled>←</button><button class="gx-ib" id="gx-fwd" title="İleri" disabled>→</button><button class="gx-ib" id="gx-reload" title="Yenile">⟳</button>
-<input id="gx-url" type="text" inputmode="url" autocapitalize="off" autocomplete="off" spellcheck="false" placeholder="Adres yaz, ara ya da yapay zekâya sor…" aria-label="Adres çubuğu">
-<button class="gx-ib" id="gx-ext" title="Yeni sekmede aç">↗</button><button class="gx-ib gx-aibtn" id="gx-ai-toggle" title="Yapay zekâ">✦ AI</button></div>
-<div class="gx-body"><div class="gx-page">
-<div class="gx-start" id="gx-start"><div class="gx-hero">AI Studio <b>GX</b></div>
-<form class="gx-search" id="gx-sform"><input id="gx-sq" type="text" placeholder="Vikipedi'de ara veya yapay zekâya sor…" autocomplete="off"><button type="submit" class="gx-go">Ara</button><button type="button" class="gx-go alt" id="gx-sai">✦ AI'ye sor</button></form>
-<div class="gx-dial" id="gx-dial"></div>
-<p class="gx-note">Adres yazıp Enter’a bas veya arama yap. Bazı siteler (Google, YouTube, bankalar…) güvenlik nedeniyle uygulama içine gömülmeyi engeller; sayfa boşsa üstteki ↗ düğmesiyle yeni sekmede aç.</p></div>
-<div id="gx-frames"></div></div>
-<aside class="gx-ai" id="gx-ai" hidden><div class="gx-ai-h"><b>✦ Yapay zekâ</b><span><button class="gx-ib sm" id="gx-ai-clear" title="Sohbeti temizle">⌫</button><button class="gx-ib sm" id="gx-ai-close" title="Kapat">✕</button></span></div>
-<div class="gx-ctx" id="gx-ctx"></div>
-<div class="gx-msgs" id="gx-msgs"></div>
-<div class="gx-chips" id="gx-chips"></div>
-<details class="gx-paste"><summary>Sayfa metni yapıştır</summary><textarea id="gx-paste" rows="4" placeholder="Siteden kopyaladığın metni buraya yapıştır; yapay zekâ onu okuyup cevaplar."></textarea></details>
-<form class="gx-aif" id="gx-aif"><input id="gx-aiin" type="text" placeholder="Bu sayfa hakkında sor…" autocomplete="off"><button class="gx-go" type="submit" id="gx-aisend">Gönder</button><button class="gx-go alt" type="button" id="gx-aistop" hidden>Durdur</button></form></aside>
-</div></div></div></section>
 </main></div>
 <div class="overlay" id="settings" hidden><div class="modal" role="dialog" aria-modal="true"><div class="row" style="justify-content:space-between"><h2>Ayarlar</h2><button class="icon-btn" id="set-close">✕</button></div><p class="msg" id="set-status"></p><div class="sub"><span class="lbl">Yapay zekâ</span><p class="hint">Bu atölye Manus AI ile çalışır; ayrı API anahtarı veya Claude hesabı gerekmez.</p></div><div class="sub"><span class="lbl">Tema</span><div class="chips" id="theme-chips"><button class="chip" data-t="light">Açık</button><button class="chip" data-t="dark">Koyu</button></div></div><div class="sub"><span class="lbl">Veriler</span><div class="row"><button class="btn sm" id="clr-chat">Sohbeti sil</button><button class="btn sm" id="clr-hist">Prompt geçmişini sil</button><button class="btn sm danger" id="clr-all">Tüm yerel verileri sil</button></div></div></div></div>
 <div class="drawer-wrap" id="drawer" hidden><div class="drawer-bg" id="drawer-bg"></div><aside class="drawer" aria-label="Menü"><h3>Menü <button class="icon-btn" id="drawer-close" aria-label="Kapat">✕</button></h3>
-<button class="dit" data-go="browser"><span>🌐</span>Tarayıcı</button><hr>
+<hr>
 <button class="dit" data-go="prompt"><span>✎</span>Prompt Atölyesi</button><button class="dit" data-go="chat"><span>▤</span>Asistan</button><button class="dit" data-go="sheet"><span>▦</span>Akıllı Tablo</button><button class="dit" data-go="lab"><span>▣</span>Ödev &amp; Sınav</button></aside></div>
 <div id="toasts" aria-live="polite"></div>
 <script>
@@ -137,7 +72,7 @@ async function copyText(t){try{await navigator.clipboard.writeText(t);toast('Kop
 function countWords(t){return(String(t).match(/\S+/g)||[]).length}
 
 /* Eksik bırakılmış gezinme sistemi tamamlandı. */
-const VIEWS={prompt:['Prompt Atölyesi','Fikri yaz, prompt hazır olsun'],chat:['Asistan','Sor, üret, birlikte çöz'],sheet:['Akıllı Tablo','Verilerini düzenle'],lab:['Ödev & Sınav','Öğren ve hazırlan'],browser:['Tarayıcı','Web\'de gez']};let currentView='prompt';
+const VIEWS={prompt:['Prompt Atölyesi','Fikri yaz, prompt hazır olsun'],chat:['Asistan','Sor, üret, birlikte çöz'],sheet:['Akıllı Tablo','Verilerini düzenle'],lab:['Ödev & Sınav','Öğren ve hazırlan']};let currentView='prompt';
 function show(name){if(!VIEWS[name])name='prompt';currentView=name;$$('.view').forEach(v=>v.classList.toggle('on',v.id==='view-'+name));$$('.nav').forEach(b=>b.classList.toggle('active',b.dataset.view===name));$('#view-title').textContent=VIEWS[name][0];$('#view-sub').textContent=VIEWS[name][1];$$('.dit').forEach(b=>b.classList.toggle('active',b.dataset.go===name))}
 $$('.nav').forEach(b=>b.addEventListener('click',()=>show(b.dataset.view)));
 
