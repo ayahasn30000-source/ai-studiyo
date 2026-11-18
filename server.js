@@ -29,8 +29,8 @@ const server=http.createServer(async(req,res)=>{
     if(!isAuthed(req))return json(res,401,{error:'Önce uygulama şifresiyle giriş yapın.'});
     try{return json(res,200,await ai(await readBody(req)))}catch(e){return json(res,500,{error:e.message});}
   }
-  let file=req.url==='/'?'/index.html':req.url.split('?')[0];file=path.join(__dirname,'public',path.normalize(file));
+  const requested=req.url.split('?')[0];let file=requested==='/'?'/index.html':requested;file=path.join(__dirname,'public',path.normalize(file));
   if(!file.startsWith(path.join(__dirname,'public'))){res.writeHead(403);return res.end('Forbidden');}
-  fs.readFile(file,(e,d)=>{if(e){res.writeHead(404);return res.end('Not found');}const ext=path.extname(file);const type={'.html':'text/html; charset=utf-8','.json':'application/json; charset=utf-8','.css':'text/css','.js':'text/javascript'}[ext]||'application/octet-stream';res.writeHead(200,{'Content-Type':type});res.end(d);});
+  fs.readFile(file,(e,d)=>{if(e&&!path.extname(requested)){file=path.join(__dirname,'public','index.html');fs.readFile(file,(fallbackErr,fallbackData)=>{if(fallbackErr){res.writeHead(404);return res.end('Not found');}res.writeHead(200,{'Content-Type':'text/html; charset=utf-8'});res.end(fallbackData)});return}if(e){res.writeHead(404);return res.end('Not found');}const ext=path.extname(file);const type={'.html':'text/html; charset=utf-8','.json':'application/json; charset=utf-8','.css':'text/css','.js':'text/javascript'}[ext]||'application/octet-stream';res.writeHead(200,{'Content-Type':type});res.end(d);});
 });
 server.listen(port,'0.0.0.0',()=>console.log(`AI Studio Atölyesi listening on ${port}`));
