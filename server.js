@@ -21,7 +21,7 @@ const server=http.createServer(async(req,res)=>{
   if(req.method==='GET'&&req.url==='/api/session'){return json(res,200,{authenticated:isAuthed(req)});}
   if(req.method==='POST'&&req.url==='/api/login'){
     const body=await readBody(req);
-    if(!accessPassword||typeof body.password!=='string'||body.password!==accessPassword)return json(res,401,{error:'Şifre yanlış.'});
+    if(!accessPassword||typeof body.password!=='string'||body.password.trim()!==accessPassword.trim())return json(res,401,{error:'Şifre yanlış.'});
     return json(res,200,{authenticated:true},{'Set-Cookie':`${cookieName}=${token()}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000`});
   }
   if(req.method==='POST'&&req.url==='/api/logout')return json(res,200,{ok:true},{'Set-Cookie':`${cookieName}=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`});

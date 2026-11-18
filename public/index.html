@@ -135,7 +135,7 @@ function doubleConfirm(btn,fn){let yes=false;btn.addEventListener('click',()=>{i
 /* Başlangıç ve uygulama şifresi */
 const authGate=$('#auth-gate'),authForm=$('#auth-form'),authPassword=$('#auth-password'),authErr=$('#auth-err');
 async function checkSession(){try{const r=await fetch('/api/session');const d=await r.json();if(d.authenticated)authGate.hidden=true;else authGate.hidden=false}catch{authGate.hidden=false}}
-authForm.addEventListener('submit',async e=>{e.preventDefault();authErr.textContent='Kontrol ediliyor...';try{const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:authPassword.value})});const d=await r.json();if(!r.ok)throw new Error(d.error||'Giriş başarısız.');authGate.hidden=true;authPassword.value='';authErr.textContent=''}catch(err){authErr.textContent=err.message||'Şifre yanlış.';authPassword.select()}});
+authForm.addEventListener('submit',async e=>{e.preventDefault();authErr.textContent='Kontrol ediliyor...';try{const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:authPassword.value.trim()})});const d=await r.json();if(!r.ok)throw new Error(d.error||'Giriş başarısız.');authGate.hidden=true;authPassword.value='';authErr.textContent='';location.reload()}catch(err){authErr.textContent=err.message||'Şifre yanlış.';authPassword.select()}});
 show((location.hash||'').slice(1)||'prompt');setPill();initAI();checkSession();
 </script>
 </body></html>
