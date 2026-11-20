@@ -15,11 +15,15 @@ https://3000-ivdwdt16664qw4r35cjx0-44c19cd4.sg2.manus.computer/aistudio-yonetim-
 
 Yönetim paneli bağlantısı yalnızca site sahibi içindir. Yönetici parolası bu belgeye, sohbete, koda veya başka bir yapay zekâya yazılmamalıdır. Parola platformun güvenli secret alanında tutulur.
 
-**Dış yapay zekâlar için gerçek düzenleme bağlantısı:** Henüz kurulmadı. Bu proje şu anda GitHub’a bağlı değildir. Mevcut iç Git deposu dış yapay zekâlara düzenleme yetkisi veren bir bağlantı değildir. ChatGPT, Claude, Grok veya Gemini’nin kodu gerçekten değiştirebilmesi için ayrıca yetkilendirilmiş bir GitHub deposu, API veya MCP entegrasyonu kurulması gerekir.
+**Gerçek kod deposu / düzenleme kaynağı (Private GitHub):**
+
+https://github.com/ayahasn30000-source/ai-studiyo
+
+AI Studio kodu bu private GitHub deposuna gönderildi. Linki görmek tek başına erişim vermez; kodu incelemek veya değiştirmek isteyen yapay zekâ hesabının GitHub’da ayrıca yetkilendirilmiş olması gerekir. Yönetim parolası veya GitHub tokenı paylaşılmamalıdır.
 
 ## Önemli teknik gerçek
 
-Bu belgeyi bir yapay zekâya vermek, o yapay zekâyı otomatik olarak siteye bağlamaz. Gerçek bağlantı için ilgili yapay zekânın web erişimi, bir API/MCP bağlayıcısı veya site sahibinin kuracağı güvenli bir entegrasyon gerekir. Hiçbir model yönetim bağlantısına kendi başına giriş yapamaz ve parola istememelidir.
+Bu belgeyi bir yapay zekâya vermek, o yapay zekâyı otomatik olarak siteye bağlamaz. Kod deposuna erişim için yetkili bir GitHub hesabı, GitHub connector veya kullanıcı tarafından verilen erişim gerekir. Gerçek bağlantı için ilgili yapay zekânın web erişimi, bir API/MCP bağlayıcısı veya site sahibinin kuracağı güvenli bir entegrasyon gerekir. Hiçbir model yönetim bağlantısına kendi başına giriş yapamaz ve parola istememelidir.
 
 Mevcut site, tarayıcı üzerinden kullanılan korumalı bir Webdev uygulamasıdır. Dış modellerin doğrudan otomatik görev paylaşması için ileride güvenli bir API veya MCP katmanı eklenmesi gerekir. Bu katman eklenmeden dış yapay zekâlar yalnızca bu protokolü uygulayabilir ve siteyi kullanıcı verdiğinde ziyaret edebilir.
 
@@ -98,9 +102,14 @@ Ana site:
 https://3000-ivdwdt16664qw4r35cjx0-44c19cd4.sg2.manus.computer/
 
 Gizli yönetim paneli bağlantısı yalnızca site sahibine aittir:
+
+Kod deposu (private GitHub, erişim yetkisi gerekir):
+https://github.com/ayahasn30000-source/ai-studiyo
+
+Gizli yönetim paneli bağlantısı yalnızca site sahibine aittir:
 https://3000-ivdwdt16664qw4r35cjx0-44c19cd4.sg2.manus.computer/aistudio-yonetim-8b6f2d
 
-Önemli: Yönetici parolası isteme, tahmin etme veya saklamaya çalışma. Bu metin tek başına sana siteyi düzenleme yetkisi vermez. Gerçek düzenleme bağlantısı henüz kurulmamıştır. Gerçek bağlantın yoksa bunu açıkça belirt.
+Önemli: Yönetici parolası isteme, tahmin etme veya saklamaya çalışma. Bu metin tek başına sana siteyi düzenleme yetkisi vermez. Kod deposuna erişimin varsa değişiklik öner; doğrudan push veya yayınlama için ayrıca kullanıcı yetkisi gerekir. Gerçek bağlantın yoksa bunu açıkça belirt.
 
 Önce şu durum mesajını ver:
 MODEL_STATUS
