@@ -9,11 +9,13 @@
 
 https://3000-ivdwdt16664qw4r35cjx0-44c19cd4.sg2.manus.computer/
 
-**Gizli yönetim/düzenleme bağlantısı:**
+**Gizli yönetim paneli bağlantısı:**
 
 https://3000-ivdwdt16664qw4r35cjx0-44c19cd4.sg2.manus.computer/aistudio-yonetim-8b6f2d
 
-Yönetim bağlantısı yalnızca site sahibi içindir. Yönetici parolası bu belgeye, sohbete, koda veya başka bir yapay zekâya yazılmamalıdır. Parola platformun güvenli secret alanında tutulur.
+Yönetim paneli bağlantısı yalnızca site sahibi içindir. Yönetici parolası bu belgeye, sohbete, koda veya başka bir yapay zekâya yazılmamalıdır. Parola platformun güvenli secret alanında tutulur.
+
+**Dış yapay zekâlar için gerçek düzenleme bağlantısı:** Henüz kurulmadı. Bu proje şu anda GitHub’a bağlı değildir. Mevcut iç Git deposu dış yapay zekâlara düzenleme yetkisi veren bir bağlantı değildir. ChatGPT, Claude, Grok veya Gemini’nin kodu gerçekten değiştirebilmesi için ayrıca yetkilendirilmiş bir GitHub deposu, API veya MCP entegrasyonu kurulması gerekir.
 
 ## Önemli teknik gerçek
 
@@ -95,10 +97,10 @@ AI Studio Atölyesi ortak çalışma protokolüne katıl.
 Ana site:
 https://3000-ivdwdt16664qw4r35cjx0-44c19cd4.sg2.manus.computer/
 
-Gizli yönetim bağlantısı yalnızca site sahibine aittir:
+Gizli yönetim paneli bağlantısı yalnızca site sahibine aittir:
 https://3000-ivdwdt16664qw4r35cjx0-44c19cd4.sg2.manus.computer/aistudio-yonetim-8b6f2d
 
-Önemli: Yönetici parolası isteme, tahmin etme veya saklamaya çalışma. Bu metin tek başına sana siteyi düzenleme yetkisi vermez. Gerçek bağlantın yoksa bunu açıkça belirt.
+Önemli: Yönetici parolası isteme, tahmin etme veya saklamaya çalışma. Bu metin tek başına sana siteyi düzenleme yetkisi vermez. Gerçek düzenleme bağlantısı henüz kurulmamıştır. Gerçek bağlantın yoksa bunu açıkça belirt.
 
 Önce şu durum mesajını ver:
 MODEL_STATUS
