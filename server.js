@@ -20,9 +20,33 @@ async function ai(body){
   if(body.json){let value;try{value=JSON.parse(text.replace(/^```json\s*|\s*```$/g,''));}catch{throw new Error('AI geçerli JSON döndürmedi.')}return {text,value};}
   return {text};
 }
+const externalProviders={
+  openai:{label:'ChatGPT / OpenAI',key:'OPENAI_API_KEY'},
+  anthropic:{label:'Claude / Anthropic',key:'ANTHROPIC_API_KEY'},
+  gemini:{label:'Gemini / Google',key:'GEMINI_API_KEY'}
+};
+function providerStatus(){return Object.fromEntries(Object.entries(externalProviders).map(([id,p])=>[id,{id,label:p.label,status:process.env[p.key]?'READY':'INACTIVE'}]))}
+function cleanMessages(messages){return (Array.isArray(messages)?messages:[]).slice(-16).map(m=>({role:m.role==='assistant'?'assistant':'user',content:String(m.content||'').slice(0,16000)})).filter(m=>m.content)}
+async function callProvider(id,messages){
+  const p=externalProviders[id],key=p&&process.env[p.key];if(!p)return {id,status:'INACTIVE',error:'Bilinmeyen sağlayıcı.'};if(!key)return {id,label:p.label,status:'INACTIVE',error:'API anahtarı tanımlı değil.'};
+  try{
+    let r,data,text;
+    if(id==='openai'){
+      r=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${key}`},body:JSON.stringify({model:'gpt-4o-mini',messages,temperature:.35})});data=await r.json().catch(()=>({}));text=data.choices?.[0]?.message?.content||'';
+    }else if(id==='anthropic'){
+      const system=messages.filter(m=>m.role==='system').map(m=>m.content).join('\n');const content=messages.filter(m=>m.role!=='system').map(m=>({role:m.role==='assistant'?'assistant':'user',content:m.content}));
+      r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01'},body:JSON.stringify({model:'claude-3-5-haiku-latest',max_tokens:1800,system, messages:content})});data=await r.json().catch(()=>({}));text=data.content?.map(x=>x.text||'').join('')||'';
+    }else{
+      const contents=messages.filter(m=>m.role!=='system').map(m=>({role:m.role==='assistant'?'model':'user',parts:[{text:m.content}]}));
+      r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(key)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents,generationConfig:{temperature:.35,maxOutputTokens:1800}})});data=await r.json().catch(()=>({}));text=data.candidates?.[0]?.content?.parts?.map(x=>x.text||'').join('')||'';
+    }
+    if(!r.ok||data.error||!text)throw new Error(data.error?.message||'Sağlayıcı yanıt vermedi.');return{id,label:p.label,status:'ACTIVE',text};
+  }catch(e){return{id,label:p.label,status:'INACTIVE',error:String(e.message||'Bağlantı hatası').slice(0,220)}}
+}
+async function multiAi(body){const message=String(body.message||'').trim().slice(0,16000);if(!message)throw new Error('Mesaj boş olamaz.');const selected=(Array.isArray(body.providers)?body.providers:['openai','anthropic','gemini']).filter(id=>externalProviders[id]);const messages=[{role:'user',content:`Türkçe yanıt ver. Kullanıcı isteği:\n${message}`}];const results=await Promise.all(selected.map(id=>callProvider(id,messages)));return{results,available:providerStatus()}}
 const settingsPath=path.join(__dirname,'admin-settings.json');
-let siteSettings={announcement:'',modules:{prompt:true,chat:true,sheet:true,lab:true,generator:true}};
-try{siteSettings={...siteSettings,...JSON.parse(fs.readFileSync(settingsPath,'utf8'))};}catch{}
+let siteSettings={announcement:'',modules:{prompt:true,chat:true,sheet:true,lab:true,generator:true,multi:true}};
+try{const saved=JSON.parse(fs.readFileSync(settingsPath,'utf8'));siteSettings={...siteSettings,...saved,modules:{...siteSettings.modules,...(saved.modules&&typeof saved.modules==='object'?saved.modules:{})}};}catch{}
 function publicSettings(){return {announcement:String(siteSettings.announcement||'').slice(0,500),modules:{...siteSettings.modules}}}
 function adminCookie(value,maxAge=2592000){return `${adminCookieName}=${value}; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=${maxAge}`}
 const server=http.createServer(async(req,res)=>{
@@ -49,6 +73,11 @@ const server=http.createServer(async(req,res)=>{
     siteSettings={announcement:typeof body.announcement==='string'?body.announcement.slice(0,500):siteSettings.announcement,modules:{...siteSettings.modules,...Object.fromEntries(Object.keys(siteSettings.modules).map(k=>[k,mods[k]!==false]))}};
     try{fs.writeFileSync(settingsPath,JSON.stringify(siteSettings,null,2));}catch{}
     return json(res,200,{ok:true,settings:publicSettings()});
+  }
+  if(req.method==='GET'&&req.url==='/api/multi-ai/status')return isAuthed(req)?json(res,200,{providers:providerStatus()}):json(res,401,{error:'Önce uygulama şifresiyle giriş yapın.'});
+  if(req.method==='POST'&&req.url==='/api/multi-ai'){
+    if(!isAuthed(req))return json(res,401,{error:'Önce uygulama şifresiyle giriş yapın.'});
+    try{return json(res,200,await multiAi(await readBody(req)))}catch(e){return json(res,400,{error:e.message});}
   }
   if(req.method==='POST'&&req.url==='/api/ai'){
     if(!isAuthed(req))return json(res,401,{error:'Önce uygulama şifresiyle giriş yapın.'});
