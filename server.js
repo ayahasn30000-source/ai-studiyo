@@ -20,6 +20,7 @@ async function ai(body){
   if(body.json){let value;try{value=JSON.parse(text.replace(/^```json\s*|\s*```$/g,''));}catch{throw new Error('AI geçerli JSON döndürmedi.')}return {text,value};}
   return {text};
 }
+function parseJsonText(text){return JSON.parse(String(text||'').replace(/^```(?:json)?\s*|\s*```$/gi,''))}
 const externalProviders={
   openai:{label:'ChatGPT / OpenAI',key:'OPENAI_API_KEY'},
   anthropic:{label:'Claude / Anthropic',key:'ANTHROPIC_API_KEY'},
@@ -38,12 +39,41 @@ async function callProvider(id,messages){
       r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01'},body:JSON.stringify({model:'claude-3-5-haiku-latest',max_tokens:1800,system, messages:content})});data=await r.json().catch(()=>({}));text=data.content?.map(x=>x.text||'').join('')||'';
     }else{
       const contents=messages.filter(m=>m.role!=='system').map(m=>({role:m.role==='assistant'?'model':'user',parts:[{text:m.content}]}));
-      r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(key)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents,generationConfig:{temperature:.35,maxOutputTokens:1800}})});data=await r.json().catch(()=>({}));text=data.candidates?.[0]?.content?.parts?.map(x=>x.text||'').join('')||'';
+      r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${encodeURIComponent(key)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents,generationConfig:{temperature:.35,maxOutputTokens:1800}})});data=await r.json().catch(()=>({}));text=data.candidates?.[0]?.content?.parts?.map(x=>x.text||'').join('')||'';
     }
     if(!r.ok||data.error||!text)throw new Error(data.error?.message||'Sağlayıcı yanıt vermedi.');return{id,label:p.label,status:'ACTIVE',text};
   }catch(e){return{id,label:p.label,status:'INACTIVE',error:String(e.message||'Bağlantı hatası').slice(0,220)}}
 }
 async function multiAi(body){const message=String(body.message||'').trim().slice(0,16000);if(!message)throw new Error('Mesaj boş olamaz.');const selected=(Array.isArray(body.providers)?body.providers:['openai','anthropic','gemini']).filter(id=>externalProviders[id]);const messages=[{role:'user',content:`Türkçe yanıt ver. Kullanıcı isteği:\n${message}`}];const results=await Promise.all(selected.map(id=>callProvider(id,messages)));return{results,available:providerStatus()}}
+async function collaborativeAi(body){
+  const messages=cleanMessages(body.messages);if(!messages.length)throw new Error('Mesaj boş olamaz.');
+  const drafts=[];let manusError='';
+  const [manusResult,externalResults]=await Promise.all([
+    ai({...body,messages}).catch(e=>{manusError=String(e.message||'Manus yanıt vermedi.');return null}),
+    Promise.all(Object.keys(externalProviders).map(id=>callProvider(id,messages)))
+  ]);
+  if(manusResult?.text)drafts.push({id:'manus',label:'Manus',status:'ACTIVE',text:manusResult.text});
+  else drafts.push({id:'manus',label:'Manus',status:'INACTIVE',error:manusError||'Yanıt alınamadı.'});
+  externalResults.forEach(r=>{if(r.status==='ACTIVE'&&r.text)drafts.push(r);});
+  if(!drafts.some(d=>d.status==='ACTIVE'))throw new Error('Hiçbir yapay zekâ yanıt veremedi.');
+  const dossier=drafts.filter(d=>d.status==='ACTIVE').map(d=>`### ${d.label}\n${d.text.slice(0,7000)}`).join('\n\n');
+  const synthesis=[
+    {role:'system',content:`Sen dört yapay zekânın ortak cevap editörüsün. Manus, ChatGPT/OpenAI, Claude ve Gemini taslaklarını karşılaştır. Çelişkileri fark et, hatalı veya uydurma bilgiyi ayıkla, ortak güçlü noktaları birleştir ve kullanıcıya Türkçe, tek ve uygulanabilir bir cevap ver. Kullanıcı araştırma istiyorsa kaynak uydurma; taslaklarda doğrulanmamış bilgi varsa bunu açıkça belirt. Sağlayıcıların adlarını ve taslak sürecini kullanıcıya anlatma. ${body.json?'Yalnızca geçerli JSON döndür; Markdown kod çiti kullanma.':'Yalnızca kullanıcıya teslim edilecek nihai ortak cevabı döndür.'}`},
+    {role:'user',content:`KULLANICI İSTEĞİ VE KONUŞMA:\n${messages.map(m=>`${m.role}: ${m.content}`).join('\n').slice(-12000)}\n\nMODEL TASLAKLARI:\n${dossier}`}
+  ];
+  let final=null,synthesisError='';
+  try{final=await ai({messages:synthesis,json:body.json});}catch(e){synthesisError=String(e.message||'Ortak cevap oluşturulamadı.');}
+  if(!final){
+    const fallback=externalResults.find(r=>r.status==='ACTIVE'&&r.text);
+    if(fallback){
+      const r=await callProvider(fallback.id,synthesis);
+      if(r.status==='ACTIVE'&&r.text)final={text:r.text};
+    }
+  }
+  if(!final)throw new Error(synthesisError||'Ortak cevap oluşturulamadı.');
+  if(body.json){try{final.value=final.value??parseJsonText(final.text)}catch{throw new Error('Ortak yapay zekâlar geçerli JSON üretemedi.')}}
+  return{...final,collaboration:{mode:' ortak cevap',providers:drafts.map(({id,label,status,error})=>({id,label,status,error}))}};
+}
 const settingsPath=path.join(__dirname,'admin-settings.json');
 let siteSettings={announcement:'',modules:{prompt:true,chat:true,sheet:true,lab:true,generator:true,multi:true}};
 try{const saved=JSON.parse(fs.readFileSync(settingsPath,'utf8'));siteSettings={...siteSettings,...saved,modules:{...siteSettings.modules,...(saved.modules&&typeof saved.modules==='object'?saved.modules:{})}};}catch{}
@@ -81,7 +111,7 @@ const server=http.createServer(async(req,res)=>{
   }
   if(req.method==='POST'&&req.url==='/api/ai'){
     if(!isAuthed(req))return json(res,401,{error:'Önce uygulama şifresiyle giriş yapın.'});
-    try{return json(res,200,await ai(await readBody(req)))}catch(e){return json(res,500,{error:e.message});}
+    try{return json(res,200,await collaborativeAi(await readBody(req)))}catch(e){return json(res,500,{error:e.message});}
   }
   const requested=req.url.split('?')[0];let file=requested===adminPath?'/admin.html':(requested==='/'?'/index.html':requested);file=path.join(__dirname,'public',path.normalize(file));
   if(!file.startsWith(path.join(__dirname,'public'))){res.writeHead(403);return res.end('Forbidden');}
