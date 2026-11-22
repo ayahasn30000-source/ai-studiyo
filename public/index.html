@@ -89,7 +89,7 @@ function mdRender(text,host){host.textContent='';const lines=String(text||'').re
 
 /* Yapay zekâ: Manus'un yönetilen AI servisi. API anahtarı istemez. */
 const AI={sample:true};AI.available=()=>true;
-function setPill(){const p=$('#ai-pill'),t=$('#ai-pill-text');p.classList.remove('ok','warn');p.classList.add('ok');t.textContent='4 AI ortak hazır'}
+function setPill(){const p=$('#ai-pill'),t=$('#ai-pill-text');p.classList.remove('ok','warn');p.classList.add('ok');t.textContent='4 AI ortak modu'}
 async function initAI(){setPill()}
 function errText(e){const c=e?.code||'',m=e?.message||'';if(e?.name==='AbortError'||c==='aborted')return'İstek durduruldu.';if(c==='rate_limited')return'AI kullanım sınırı doldu. Biraz bekleyip tekrar dene.';if(e instanceof TypeError)return'Bağlantı kesildi. İnternetini kontrol edip tekrar dene.';if(e?.status>=500)return'AI servisi geçici olarak yanıt vermedi. Otomatik denemeler başarısız oldu; tekrar deneyebilirsin.';return m||'Bir hata oluştu. Tekrar dene.'}
 
@@ -97,7 +97,7 @@ function withSystem(input,sys){if(!sys)return input;const pre='[Talimat]\n'+sys+
 async function ask(input,o={}){const inp=withSystem(input,o.system);const messages=typeof inp==='string'?[{role:'user',content:inp}]:inp.map(m=>({role:m.role,content:m.content}));const body={messages};if(o.json)body.json=true;let lastError;for(let attempt=0;attempt<3;attempt++){try{const r=await fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),signal:o.signal});const data=await r.json().catch(()=>({}));if(!r.ok){const e=new Error(data.error||`AI servisi yanıt vermedi (${r.status}).`);e.status=r.status;throw e}return o.json?data.value:{text:data.text||'',collaboration:data.collaboration}}catch(e){lastError=e;if(e?.name==='AbortError'||e?.code==='aborted')throw e;if(attempt<2){await new Promise(resolve=>setTimeout(resolve,700*(attempt+1)));continue}throw lastError}}throw lastError||new Error('AI servisine bağlanılamadı.')}
 
 /* Ayarlar */
-function openSettings(){ $('#settings').hidden=false;$('#set-status').textContent='Manus + ChatGPT + Claude + Gemini ortak cevap modu hazır.' }
+function openSettings(){ $('#settings').hidden=false;$('#set-status').textContent='Manus + ChatGPT + Claude + Gemini ortak cevap modu etkin. Kredisi veya anahtarı olmayan sağlayıcı INACTIVE görünür.' }
 $('#btn-settings').addEventListener('click',openSettings);$('#ai-pill').addEventListener('click',openSettings);$('#set-close').addEventListener('click',()=>$('#settings').hidden=true);$('#settings').addEventListener('click',e=>{if(e.target===$('#settings'))$('#settings').hidden=true});
 
 $('#theme-chips').addEventListener('click',e=>{const b=e.target.closest('[data-t]');if(!b)return;document.documentElement.dataset.theme=b.dataset.t;store.set('atolye.theme',b.dataset.t);$$('#theme-chips .chip').forEach(x=>x.classList.toggle('on',x===b))});$('#btn-theme').addEventListener('click',()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;store.set('atolye.theme',t);$$('#theme-chips [data-t]').forEach(b=>b.classList.toggle('on',b.dataset.t===t))});document.documentElement.dataset.theme=store.get('atolye.theme','light');
